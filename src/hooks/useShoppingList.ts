@@ -77,6 +77,12 @@ export function useShoppingList() {
         if (data.aisles) setAisles(data.aisles);
         if (data.keywordsMap) setKeywordsMap(data.keywordsMap);
         if (data.noteText) setNoteText(data.noteText);
+        // מסך "ניהול" לא אמור להיות מסך הנחיתה - חוזרים לקנייה/פתק לפי מה שהיה
+        if (data.mode === "shopping" || data.mode === "building") {
+          setMode(data.mode);
+        } else if (data.items && data.items.length > 0) {
+          setMode("shopping");
+        }
       }
     } catch {
       // localStorage לא זמין (למשל SSR) או נתונים פגומים - מתחילים נקי
@@ -88,13 +94,13 @@ export function useShoppingList() {
   // --- שמירה בכל שינוי רלוונטי, אחרי שהטעינה הראשונית הסתיימה ---
   useEffect(() => {
     if (!loaded) return;
-    const data: PersistedState = { items, aisles, keywordsMap, noteText };
+    const data: PersistedState = { items, aisles, keywordsMap, noteText, mode };
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch {
       // אפשרי למשל אם המכסה של localStorage מלאה - לא קריטי, ממשיכים
     }
-  }, [items, aisles, keywordsMap, noteText, loaded]);
+  }, [items, aisles, keywordsMap, noteText, mode, loaded]);
 
   const openManage = useCallback(() => {
     setReturnMode(mode);

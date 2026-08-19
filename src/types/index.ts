@@ -35,4 +35,5 @@ export interface PersistedState {
   aisles: Aisle[];
   keywordsMap: KeywordsMap;
   noteText: string;
+  mode: Mode;
 }
