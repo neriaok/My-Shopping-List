@@ -1,0 +1,52 @@
+.wrapper { position: relative; width: 100%; max-width: 216px; }
+@media (min-width: 480px) { .wrapper { width: 216px; } }
+
+.tape {
+  position: absolute; top: -10px; width: 42px; height: 18px; z-index: 3;
+  background: var(--tape-color);
+  clip-path: polygon(0% 20%, 8% 0%, 22% 15%, 38% 2%, 55% 18%, 70% 3%, 85% 16%, 100% 5%, 100% 85%, 90% 100%, 75% 88%, 60% 100%, 42% 90%, 25% 100%, 12% 85%, 0% 95%);
+}
+
+.note { background: var(--note-bg-layers); padding: 18px 15px 20px; }
+
+.titleRow { display: flex; justify-content: center; margin-bottom: 6px; }
+.title {
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive; font-weight: 700;
+  font-size: 17px; color: var(--accent); text-align: center;
+}
+.counter {
+  font-size: 11px; color: var(--accent); opacity: 0.65;
+  text-align: center; margin-bottom: 4px;
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+}
+.toggleAllButton {
+  display: block; margin: 0 auto 10px; border: none; background: transparent;
+  color: var(--accent); font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+  font-size: 12px; text-decoration: underline; cursor: pointer;
+  padding: 8px 14px; min-height: 32px;
+}
+
+.itemsList { display: flex; flex-direction: column; }
+.itemRow { display: flex; align-items: center; gap: 2px; min-height: var(--tap-min); }
+
+.checkboxButton {
+  flex-shrink: 0; width: var(--tap-min); height: var(--tap-min);
+  border: none; background: transparent; display: flex;
+  align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.checkboxVisual {
+  width: 16px; height: 16px; border: 2px solid var(--accent); border-radius: 2px;
+  background: var(--checkbox-bg, transparent);
+  display: flex; align-items: center; justify-content: center;
+}
+.itemName {
+  flex: 1; font-family: 'Segoe Print', 'Comic Sans MS', cursive; font-size: 14px;
+  cursor: pointer; color: var(--item-color); text-decoration: var(--item-decoration, none);
+  padding: 10px 0;
+}
+.removeButton {
+  width: var(--tap-min); height: var(--tap-min); display: flex;
+  align-items: center; justify-content: center; border: none;
+  background: transparent; color: var(--accent); opacity: 0.4;
+  cursor: pointer; padding: 0; flex-shrink: 0;
+}

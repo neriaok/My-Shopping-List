@@ -1,0 +1,33 @@
+:root {
+  --color-bg: #F0EAD9;
+  --color-bg-manage: #F5F1E6;
+  --color-ink: #2B2521;
+  --color-muted: #7A7267;
+  --color-accent: #4C7A54;
+  --color-border: #DCD3BE;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px;
+  --space-4: 16px; --space-5: 24px; --space-6: 32px;
+  --radius-md: 10px; --radius-lg: 14px;
+  --tap-min: 44px;
+  --font-base: 15px;
+}
+
+@media (min-width: 640px) {
+  :root { --font-base: 16px; }
+}
+
+/* עם עכבר (לא מגע) אפשר לצמצם קצת את אזורי המגע */
+@media (pointer: fine) {
+  :root { --tap-min: 36px; }
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  font-size: var(--font-base);
+  color: var(--color-ink);
+  background: var(--color-bg);
+}
+button, input, textarea, select { font-family: inherit; }
