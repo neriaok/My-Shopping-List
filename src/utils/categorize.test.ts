@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { categorize, normalizeHebrew } from "./categorize";
+import { categorize, extractItemNames, normalizeHebrew } from "./categorize";
 import type { Aisle, KeywordsMap } from "../types";
 
 const aisles: Aisle[] = [
@@ -50,5 +50,35 @@ describe("categorize", () => {
       other: [],
     };
     expect(categorize("חלב", aisles, ambiguousKeywords)).toBe("produce");
+  });
+});
+
+describe("extractItemNames", () => {
+  const extractionKeywords: KeywordsMap = {
+    produce: ["מלפפון", "עגבני", "גזר"],
+    dairy: ["חלב", "גבינה", "ביצים"],
+    meat: ["עוף", "חזה עוף"],
+    other: [],
+  };
+
+  it("מפרק משפט טבעי לפריטים נפרדים, ומתעלם ממילות המילוי", () => {
+    expect(extractItemNames("אני רוצה שתקנה לי חלב וביצים", aisles, extractionKeywords)).toEqual([
+      "חלב",
+      "ביצים",
+    ]);
+  });
+
+  it("לא מפרק שורה קצרה שהיא שם פריט דו-מילי לגיטימי", () => {
+    expect(extractItemNames("חזה עוף", aisles, extractionKeywords)).toEqual(["חזה עוף"]);
+  });
+
+  it("שומר על שורה חד-מילית לא מזוהה כמו שהיא", () => {
+    expect(extractItemNames("טיטולים", aisles, extractionKeywords)).toEqual(["טיטולים"]);
+  });
+
+  it("שומר על השורה המקורית כפריט בודד כשהיא ארוכה אבל לא מכילה אף מילת מפתח ידועה", () => {
+    expect(extractItemNames("תביא בבקשה משהו מיוחד לארוחה", aisles, extractionKeywords)).toEqual([
+      "תביא בבקשה משהו מיוחד לארוחה",
+    ]);
   });
 });

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Aisle, KeywordsMap, Mode, PersistedState, ShoppingItem } from "../types";
-import { categorize } from "../utils/categorize";
+import { categorize, extractItemNames } from "../utils/categorize";
 
 const STORAGE_KEY = "shopping-app-state";
 
@@ -110,9 +110,10 @@ export function useShoppingList() {
   const closeManage = useCallback(() => setMode(returnMode), [returnMode]);
 
   const startShopping = useCallback(() => {
-    const lines = noteText.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
-    if (lines.length === 0) return;
-    const newItems: ShoppingItem[] = lines.map((name) => ({
+    const rawLines = noteText.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
+    const names = rawLines.flatMap((line) => extractItemNames(line, aisles, keywordsMap));
+    if (names.length === 0) return;
+    const newItems: ShoppingItem[] = names.map((name) => ({
       id: generateId(),
       name,
       category: categorize(name, aisles, keywordsMap),
@@ -133,9 +134,10 @@ export function useShoppingList() {
     (name: string) => {
       const trimmed = name.trim();
       if (!trimmed) return;
+      const names = extractItemNames(trimmed, aisles, keywordsMap);
       setItems((prev) => [
         ...prev,
-        { id: generateId(), name: trimmed, category: categorize(trimmed, aisles, keywordsMap), checked: false },
+        ...names.map((n) => ({ id: generateId(), name: n, category: categorize(n, aisles, keywordsMap), checked: false })),
       ]);
     },
     [aisles, keywordsMap]

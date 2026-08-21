@@ -39,3 +39,57 @@ export function categorize(
 
   return "other";
 }
+
+/**
+ * מפרק שורה חופשית - שיכולה להיות גם משפט טבעי כמו "אני רוצה שתקנה לי חלב וביצים",
+ * ולא רק פריט בודד - לרשימת שמות פריטים נפרדים.
+ *
+ * הרעיון: משתמשים באותה מילת-מפתח שכבר משמשת את categorize, רק הפוך - סורקים את השורה
+ * ומחפשים בתוכה מילים ידועות מתוך keywordsMap. מילות "מילוי" כמו "אני"/"רוצה"/"תקנה לי"
+ * פשוט לא תואמות שום מילת מפתח ומושמטות, בלי צורך ברשימת stopwords נפרדת.
+ *
+ * שורות קצרות (פחות משלוש מילים) לא עוברות פירוק בכלל, כדי לא לפגוע בשמות פריטים
+ * לגיטימיים דו-מיליים כמו "חזה עוף" (מילת מפתח דו-מילית בעצמה) או "חלב סויה".
+ */
+export function extractItemNames(
+  line: string,
+  aisles: Aisle[],
+  keywordsMap: KeywordsMap
+): string[] {
+  const trimmed = line.trim();
+  if (!trimmed) return [];
+  if (trimmed.split(/\s+/).length < 3) return [trimmed];
+
+  const allKeywords = aisles
+    .flatMap((aisle) => keywordsMap[aisle.id] ?? [])
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+
+  let scratch = normalizeHebrew(trimmed.toLowerCase());
+  const found: { start: number; word: string }[] = [];
+
+  for (const keyword of allKeywords) {
+    const normKeyword = normalizeHebrew(keyword.toLowerCase());
+    const idx = scratch.indexOf(normKeyword);
+    if (idx === -1) continue;
+
+    // מרחיבים את ההתאמה לגבולות המילה המלאה בטקסט המקורי (לא המנורמל) - כדי
+    // לשמר את הצורה שהמשתמש הקליד בפועל (למשל "עגבניות" ולא רק "עגבני"),
+    // וכדי לתפוס אוטומטית וא"ו חיבור שמחוברת ישירות למילה ("וביצים").
+    let start = idx;
+    let end = idx + normKeyword.length;
+    while (start > 0 && !/\s/.test(trimmed[start - 1])) start--;
+    while (end < trimmed.length && !/\s/.test(trimmed[end])) end++;
+
+    let word = trimmed.slice(start, end);
+    if (word.length > 2 && word[0] === "ו") word = word.slice(1);
+    found.push({ start, word });
+
+    scratch = scratch.slice(0, start) + " ".repeat(end - start) + scratch.slice(end);
+  }
+
+  // ממיינים לפי סדר ההופעה המקורי במשפט, לא לפי סדר אורך מילת המפתח שסרקנו בו
+  found.sort((a, b) => a.start - b.start);
+
+  return found.length > 0 ? found.map((f) => f.word) : [trimmed];
+}
