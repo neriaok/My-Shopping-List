@@ -2,6 +2,8 @@
 
 גרסה מפורקת ומטופסת (typed) של אפליקציית רשימת הקניות, מובנית כפרויקט React + TypeScript + Vite סטנדרטי. נבנתה מתוך גרסת ה-JSX החיה (single-file) כדי להדגים ארגון קוד ברמת פרודקשן/פורטפוליו.
 
+🔗 **אתר חי:** [my-shopping-list-ten.vercel.app](https://my-shopping-list-ten.vercel.app)
+
 ## הרצה מקומית
 
 ```bash
